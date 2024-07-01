@@ -1,3 +1,19 @@
+<?php
+session_start();
+
+include 'includes/db.php';
+include 'includes/functions.php';
+
+if (!isLoggedIn()) {
+    header("Location: login.php");
+    exit();
+}
+
+$user_id = $_SESSION['user_id'];
+
+$pictures = getUserPictures($user_id);
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -15,10 +31,10 @@
             </form>
         </div>
         <div class="menu">
-                <a href="upload.php">Upload Picture</a>
-                <a href="my_pictures.php">My Pictures</a>
-                <a href="index.php">All Pictures</a>
-                <a href="liked_pictures.php">Liked Pictures</a>
+            <a href="upload.php">Upload Picture</a>
+            <a href="my_pictures.php">My Pictures</a>
+            <a href="index.php">All Pictures</a>
+            <a href="liked_pictures.php">Liked Pictures</a>
         </div>
     <?php endif; ?>
         
@@ -29,14 +45,13 @@
                 $rowCount = 0;
                 foreach ($pictures as $picture): 
                     if ($rowCount % 4 == 0) echo "<tr>"; 
-                    ?>
+                ?>
                     <td>
                         <div class="image">
                             <img src="images/<?php echo $picture['filename']; ?>" alt="Picture">
                         </div>
                     </td>
-                    <?php
-                    echo $username;
+                <?php
                     $rowCount++;
                     if ($rowCount % 4 == 0 || $rowCount == count($pictures)) echo "</tr>"; 
                 endforeach; ?>

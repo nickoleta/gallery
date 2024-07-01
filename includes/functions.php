@@ -77,4 +77,17 @@ function uploadPicture($filename, $userId) {
     return $stmt->execute([$filename, $userId]);
 }
 
+function getUserPictures($user_id) {
+    global $conn; 
+
+    $sql = "SELECT * FROM pictures WHERE user_id = :user_id";
+    $stmt = $conn->prepare($sql);
+    $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
+    $stmt->execute();
+
+    $pictures = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    return $pictures;
+}
+
 ?>
