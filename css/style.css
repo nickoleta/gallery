@@ -214,3 +214,19 @@ a:hover {
 .blurred {
     filter: blur(5px);
 }
+
+.delete {
+    background-color: #dc3545;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 10px;
+    display: block;
+}
+
+.delete:hover {
+    background-color: #c82333;
+}
