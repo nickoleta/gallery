@@ -81,6 +81,28 @@ td {
     background-color: #c82333;
 }
 
+.like-btn {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    background: rgba(0, 0, 0, 0.5); /* Dark transparent background */
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #ddd; /* Default heart color */
+    padding: 5px 10px; /* Add some padding */
+    border-radius: 50%; /* Round corners */
+}
+
+.like-btn.liked {
+    color: red; /* Red heart color when liked */
+}
+
+.like-btn:hover {
+    color: red; /* Red heart color on hover */
+    background: rgba(0, 0, 0, 0.7); /* Darker background on hover */
+}
+
 .login-container, .register-container, .upload-container {
     background-color: #fff;
     padding-right: 20px;
@@ -192,6 +214,11 @@ a:hover {
     width: 100%;
     overflow-y: auto;
     padding: 0 20px;
+}
+
+.gallery {
+    max-width: 1200px;
+    margin: 20px auto;
 }
 
 .modal {
