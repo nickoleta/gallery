@@ -22,22 +22,42 @@ function registerUser($username, $password) {
     $stmt->bindParam(':username', $username);
     $stmt->bindParam(':password', $password_hash);
 
-    return $stmt->execute();
+    if ($stmt->execute()) {
+        return getUserByUsername($username);
+    }
+    return false;
+}
+
+function getUserByUsername($username) {
+    global $conn;
+
+    $query = "SELECT id, username FROM users WHERE username = :username";
+    $stmt = $conn->prepare($query);
+    $stmt->bindParam(':username', $username);
+    $stmt->execute();
+
+    return $stmt->fetch(PDO::FETCH_ASSOC);
 }
 
 function loginUser($username, $password) {
     global $conn;
-    $stmt = $conn->prepare("SELECT * FROM users WHERE username = :username");
+
+    $query = "SELECT id, username, password FROM users WHERE username = :username";
+    $stmt = $conn->prepare($query);
     $stmt->bindParam(':username', $username);
     $stmt->execute();
-    $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    if ($user && password_verify($password, $user['password'])) {
-        $_SESSION['user_id'] = $user['id'];
-        $_SESSION['username'] = $user['username'];
-        return true;
+    if ($stmt->rowCount() > 0) {
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+        if (password_verify($password, $user['password'])) {
+            return $user; // Return the user data
+        }
     }
     return false;
+}
+
+function getLoggedInUserId() {
+    return $_SESSION['user_id'] ?? null;
 }
 
 function isLoggedIn() {
@@ -50,4 +70,11 @@ function getAllPictures() {
     $stmt->execute();
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
+
+function uploadPicture($filename, $userId) {
+    global $conn;
+    $stmt = $conn->prepare("INSERT INTO pictures (filename, user_id) VALUES (?, ?)");
+    return $stmt->execute([$filename, $userId]);
+}
+
 ?>

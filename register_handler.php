@@ -4,39 +4,32 @@ session_start();
 include 'includes/db.php';
 include 'includes/functions.php';
 
-$username = $_SESSION['username'];
-$password = $_SESSION['password'];
-$confirm_password = $_SESSION['confirm_password'];
-
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $username = trim($_POST['username']);
     $password = trim($_POST['password']);
     $confirm_password = trim($_POST['confirm_password']);
 
-    // Validate input
+    $errors = [];
+
     if (empty($username)) {
-        $_SESSION['errors'] = ['Username cannot be empty!'];
-        header("Location: register.php");
-        exit();
+        $errors[] = 'Username is required.';
     }
     if (empty($password)) {
-        $_SESSION['errors'] = ['Password cannot be empty!'];
-        header("Location: register.php");
-        exit();
+        $errors[] = 'Password is required.';
     }
     if ($password !== $confirm_password) {
-        $_SESSION['errors'] = ['Both passwords do not match!'];
-        header("Location: register.php");
-        exit();
+        $errors[] = 'Passwords do not match.';
     }
 
-    // Register the user
-    if (registerUser($username, $password)) {
+    if (empty($errors) && $user = registerUser($username, $password) != false) {
         $_SESSION['registration_success'] = true;
-        $_SESSION['username'] = $username;
-        header("Location: login.php?username=" . urlencode($username));
+        $_SESSION['username'] = $user['username'];
+        $_SESSION['user_id'] = $user['id'];
+        header("Location: login.php?username=" . urlencode($user['username']));
         exit();
     } else {
+        $errors[] = 'Registration failed.';
+        $_SESSION['errors'] = $errors;
         header("Location: register.php");
         exit();
     }

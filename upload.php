@@ -1,70 +1,52 @@
 <?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
+session_start();
+
 include 'includes/db.php';
 include 'includes/functions.php';
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['image'])) {
-    $target_dir = "images/";
-    $target_file = $target_dir . basename($_FILES['image']['name']);
-    $uploadOk = 1;
-    $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
+if (!isLoggedIn()) {
+    header("Location: login.php");
+    exit();
+}
 
-    // Check if image file is a actual image or fake image
-    $check = getimagesize($_FILES['image']['tmp_name']);
-    if($check !== false) {
-        $uploadOk = 1;
-    } else {
-        echo "File is not an image.";
-        $uploadOk = 0;
-    }
-
-    // Check if file already exists
-    if (file_exists($target_file)) {
-        echo "Sorry, file already exists.";
-        $uploadOk = 0;
-    }
-
-    // Check file size
-    if ($_FILES['image']['size'] > 500000) {
-        echo "Sorry, your file is too large.";
-        $uploadOk = 0;
-    }
-
-    // Allow certain file formats
-    if($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg"
-    && $imageFileType != "gif" ) {
-        echo "Sorry, only JPG, JPEG, PNG & GIF files are allowed.";
-        $uploadOk = 0;
-    }
-
-    // Check if $uploadOk is set to 0 by an error
-    if ($uploadOk == 0) {
-        echo "Sorry, your file was not uploaded.";
-    // if everything is ok, try to upload file
-    } else {
-        if (move_uploaded_file($_FILES['image']['tmp_name'], $target_file)) {
-            $stmt = $conn->prepare("INSERT INTO pictures (filename) VALUES (:filename)");
-            $stmt->bindParam(':filename', $_FILES['image']['name']);
-            $stmt->execute();
-            echo "The file ". htmlspecialchars( basename( $_FILES['image']['name'])). " has been uploaded.";
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $userId = getLoggedInUserId();
+    if ($userId && isset($_FILES['picture'])) {
+        $filename = $_FILES['picture']['name'];
+        $filepath = 'images/' . $filename;
+        if (move_uploaded_file($_FILES['picture']['tmp_name'], $filepath)) {
+            if (uploadPicture($filename, $userId)) {
+                echo "Picture uploaded successfully.";
+            } else {
+                echo "Failed to save picture in database.";
+            }
         } else {
-            echo "Sorry, there was an error uploading your file.";
+            echo "Failed to upload picture.";
         }
     }
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Upload Image</title>
+    <title>Upload Picture</title>
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <h1>Upload Image</h1>
-    <form action="upload.php" method="post" enctype="multipart/form-data">
-        Select image to upload:
-        <input type="file" name="image" id="image">
-        <input type="submit" value="Upload Image" name="submit">
-    </form>
+    <div class="upload-container">
+        <form action="upload.php" method="POST" enctype="multipart/form-data">
+            <h2>Upload Picture</h2>
+            <div class="form-group">
+                <label for="picture">Select Picture</label>
+                <input type="file" id="picture" name="picture" required>
+            </div>
+            <button type="submit">Upload</button>
+        </form>
+    </div>
 </body>
 </html>
