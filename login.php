@@ -49,7 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <div class="form-group">
                 <input type="password" id="password" name="password" placeholder="Password" required>
             </div>
-            <button type="submit">Login</button>
+            <button class="login" type="submit">Login</button>
             <div class="register-redirect">
                 <p>Don't have an account?</p>
                 <a href="register.php">Register here</a>
