@@ -13,73 +13,75 @@ $pictures = getUserPictures($user_id);
 ?>
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>My Pictures</title>
-    <link rel="stylesheet" href="css/style.css">
-</head>
-<body>
-    <header>
-        <h1>My Pictures</h1>
-    </header>
+    <head>
+        <meta charset="UTF-8">
+        <title>My Pictures</title>
+        <link rel="stylesheet" href="css/style.css">
+    </head>
+    <body>
+        <header>
+            <h1>My Pictures</h1>
+        </header>
 
-    <?php if (!empty($username)): ?>
-        <div class="menu">
-            <div class="logout">
-                <form action="logout.php" method="POST">
-                    <button type="submit" name="logout">Logout</button>
-                </form>
+        <?php if (!empty($username)): ?>
+            <div class="menu">
+                <div class="menu-links">
+                    <a href="upload.php">Upload Picture</a>
+                    <a href="my_pictures.php">My Pictures</a>
+                    <a href="index.php">All Pictures</a>
+                    <a href="liked_pictures.php">Liked Pictures</a>
+                </div>
+                <div class="logout">
+                    <form action="logout.php" method="POST">
+                        <button type="submit" name="logout">Logout</button>
+                    </form>
+                </div>
             </div>
-            <div class="menu-links">
-                <a href="upload.php">Upload Picture</a>
-                <a href="my_pictures.php">My Pictures</a>
-                <a href="index.php">All Pictures</a>
-                <a href="liked_pictures.php">Liked Pictures</a>
-            </div>
-        </div>
-    <?php endif; ?>
+        <?php endif; ?>
 
-    <div class="gallery-container" id="content">
-        <div class="gallery">
-            <table>
-                <tbody>
-                    <?php
-                    $rowCount = 0;
-                    foreach ($pictures as $picture): 
-                        if ($rowCount % 4 == 0) echo "<tr>"; 
-                    ?>
+        <div class="gallery-container" id="content">
+            <div class="gallery">
+                <table>
+                    <tbody>
+                        <?php
+                        $rowCount = 0;
+                        foreach ($pictures as $picture):
+                            if ($rowCount % 4 == 0)
+                                echo "<tr>";
+                            ?>
                         <td>
                             <div class="image">
                                 <img src="images/<?php echo $picture['filename']; ?>" alt="Picture" class="thumbnail" onclick="openModal(this.src)">
                             </div>
                         </td>
-                    <?php
+                        <?php
                         $rowCount++;
-                        if ($rowCount % 4 == 0 || $rowCount == count($pictures)) echo "</tr>"; 
-                    endforeach; 
+                        if ($rowCount % 4 == 0 || $rowCount == count($pictures))
+                            echo "</tr>";
+                    endforeach;
                     ?>
-                </tbody>
-            </table>
+                    </tbody>
+                </table>
+            </div>
         </div>
-    </div>
 
-    <!-- The Modal -->
-    <div id="myModal" class="modal">
-        <span class="close" onclick="closeModal()">&times;</span>
-        <img class="modal-content" id="img01">
-    </div>
+        <!-- The Modal -->
+        <div id="myModal" class="modal">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <img class="modal-content" id="img01">
+        </div>
 
-    <script>
-        function openModal(src) {
-            document.getElementById('myModal').style.display = "block";
-            document.getElementById('img01').src = src;
-            document.getElementById('content').classList.add('blurred');
-        }
+        <script>
+            function openModal(src) {
+                document.getElementById('myModal').style.display = "block";
+                document.getElementById('img01').src = src;
+                document.getElementById('content').classList.add('blurred');
+            }
 
-        function closeModal() {
-            document.getElementById('myModal').style.display = "none";
-            document.getElementById('content').classList.remove('blurred');
-        }
-    </script>
-</body>
+            function closeModal() {
+                document.getElementById('myModal').style.display = "none";
+                document.getElementById('content').classList.remove('blurred');
+            }
+        </script>
+    </body>
 </html>
