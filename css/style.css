@@ -55,7 +55,7 @@ td {
     transform: scale(1.05);
 }
 
-.login-container, .register-container {
+.login-container, .register-container, .upload-container {
     background-color: #fff;
     padding-right: 20px;
     padding-left: 20px;
@@ -67,7 +67,7 @@ td {
     margin-top: 120px;
 }
 
-.login-form, .register-form {
+.login-form, .register-form, .upload-form {
     display: flex;
     flex-direction: column;
 }
@@ -108,7 +108,7 @@ button:hover {
     background-color: #0056b3;
 }
 
-.register-redirect, .login-redirect {
+.register-redirect, .login-redirect, .upload-redirect {
     text-align: center;
     margin-bottom: 10px;
 }

@@ -35,13 +35,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </head>
 <body>
     <div class="upload-container">
-        <form action="upload.php" method="POST" enctype="multipart/form-data">
+        <form action="upload.php" method="POST" enctype="multipart/form-data" class="upload-form">
             <h2>Upload Picture</h2>
+            <?php if (!empty($errors)): ?>
+                <div>
+                    <?php foreach ($errors as $error): ?>
+                        <p><?php echo $error; ?></p>
+                    <?php endforeach; ?>
+                </div>
+            <?php endif; ?>
             <div class="form-group">
-                <label for="picture">Select Picture</label>
-                <input type="file" id="picture" name="picture" required>
+                <input type="file" id="file" name="file" required>
             </div>
-            <button type="submit">Upload</button>
+            <button class="upload" type="submit">Upload</button>
+            <div class="upload-redirect">
+                <p></p>
+                <a href="index.php">Back to Gallery</a>
+            </div>
         </form>
     </div>
 </body>
