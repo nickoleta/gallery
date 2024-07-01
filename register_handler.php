@@ -16,22 +16,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Validate input
     if (empty($username)) {
         $_SESSION['errors'] = ['Username cannot be empty!'];
-        $_SESSION['password'] = $password;
-        $_SESSION['confirm_password'] = $confirm_password;
         header("Location: register.php");
         exit();
     }
     if (empty($password)) {
         $_SESSION['errors'] = ['Password cannot be empty!'];
-        $_SESSION['username'] = $username;
-        $_SESSION['confirm_password'] = $confirm_password;
         header("Location: register.php");
         exit();
     }
     if ($password !== $confirm_password) {
         $_SESSION['errors'] = ['Both passwords do not match!'];
-        $_SESSION['username'] = $username;
-        $_SESSION['password'] = $password;
         header("Location: register.php");
         exit();
     }

@@ -1,17 +1,5 @@
 <?php
 session_start();
-
-$username = $_SESSION['username'];
-$password = $_SESSION['password'];
-
-//if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-//    if (isset($_POST['username'])) {
-//        $username = $_POST['username'];
-//    }
-//    if (isset($_POST['password'])) {
-//        $password = $_POST['password'];
-//    }
-//}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -32,19 +20,19 @@ $password = $_SESSION['password'];
                 </div>
             <?php endif; ?>
             <div class="form-group">
-                <label for="username">Username</label>
-                <input type="text" id="username" name="username" value="<?php echo htmlspecialchars($username); ?>">
+                <input type="text" id="username" name="username" placeholder="Username">
             </div>
             <div class="form-group">
-                <label for="password">Password</label>
-                <input type="password" id="password" name="password" value="<?php echo htmlspecialchars($password); ?>">
+                <input type="password" id="password" name="password" placeholder="Password">
             </div>
             <div class="form-group">
-                <label for="confirm_password">Confirm Password</label>
-                <input type="password" id="confirm_password" name="confirm_password">
+                <input type="password" id="confirm_password" name="confirm_password" placeholder="Confirm password">
             </div>
             <button type="submit">Register</button>
-            <p>Already have an account? <a href="login.php">Login here</a></p>
+            <div class="login-redirect">
+                <p>Already have an account?</p>
+                <a href="login.php">Login here</a>
+            </div>
         </form>
     </div>
 </body>

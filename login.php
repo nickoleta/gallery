@@ -43,15 +43,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 </div>
             <?php endif; ?>
             <div class="form-group">
-                <label for="username">Username</label>
-                <input type="text" id="username" name="username" value="<?php echo htmlspecialchars($username); ?>" required>
+                <input type="text" id="username" name="username" value="<?php echo htmlspecialchars($username); ?>" placeholder="Username" required>
             </div>
             <div class="form-group">
-                <label for="password">Password</label>
-                <input type="password" id="password" name="password" required>
+                <input type="password" id="password" name="password" placeholder="Password" required>
             </div>
             <button type="submit">Login</button>
-            <p>Don't have an account? <a href="register.php">Register here</a></p>
+            <div class="register-redirect">
+                <p>Don't have an account?</p>
+                <a href="register.php">Register here</a>
+            </div>
         </form>
     </div>
 </body>
