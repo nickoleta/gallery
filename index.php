@@ -38,6 +38,10 @@ $pictures = getAllPictures();
             <a href="index.php">All Pictures</a>
             <a href="liked_pictures.php">Liked Pictures</a>
         </div>
+    <?php else: ?>
+        <div class="login">
+            <a href="login.php">Login</a>
+        </div>
     <?php endif; ?>
 
     <div class="gallery">
