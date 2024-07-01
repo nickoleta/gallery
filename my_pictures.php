@@ -52,6 +52,10 @@ $pictures = getUserPictures($user_id);
                         <td>
                             <div class="image">
                                 <img src="images/<?php echo $picture['filename']; ?>" alt="Picture" class="thumbnail" onclick="openModal(this.src)">
+                                <form class="delete-form" action="delete_picture.php" method="POST">
+                                    <input type="hidden" name="picture_id" value="<?php echo $picture['id']; ?>">
+                                    <button type="submit" class="delete">Delete</button>
+                                </form>
                             </div>
                         </td>
                         <?php

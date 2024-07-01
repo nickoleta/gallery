@@ -4,10 +4,8 @@ session_start();
 include 'includes/db.php';
 include 'includes/functions.php';
 
-// Get user ID from session
 $user_id = $_SESSION['user_id'] ?? 0;
 
-// Check if picture ID is provided
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && !empty($_POST['picture_id'])) {
     $picture_id = $_POST['picture_id'];
 
@@ -17,7 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && !empty($_POST['picture_id'])) {
     if ($picture && $picture['user_id'] == $user_id) {
         // Delete the picture from the database and filesystem
         if (deletePicture($picture_id, $picture['filename'])) {
-            header("Location: my_pictures.php");
+            header("Location: index.php");
             exit();
         } else {
             $error = 'Error deleting picture';
@@ -29,7 +27,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && !empty($_POST['picture_id'])) {
     $error = 'Invalid request';
 }
 
-// Redirect back with error message if any
 header("Location: my_pictures.php?error=" . urlencode($error));
 exit();
 
@@ -43,7 +40,6 @@ function getPictureById($id) {
 
 function deletePicture($id, $filename) {
     global $conn;
-    // Delete from database
     $stmt = $conn->prepare("DELETE FROM pictures WHERE id = :id");
     $stmt->bindParam(':id', $id, PDO::PARAM_INT);
     if ($stmt->execute()) {
