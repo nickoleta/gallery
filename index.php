@@ -19,10 +19,6 @@ $user_id = $_SESSION['user_id'] ?? '';
 $pictures = getAllPictures();
 ?>
 <!DOCTYPE html>
-<?php
-// Same as before, fetch pictures and user details
-?>
-<!DOCTYPE html>
 <html lang="en">
     <head>
         <meta charset="UTF-8">
@@ -37,15 +33,13 @@ $pictures = getAllPictures();
         <?php if (!empty($username)): ?>
             <div class="menu">
                 <div class="menu-links">
-                    <a href="upload.php">Upload Picture</a>
-                    <a href="my_pictures.php">My Pictures</a>
                     <a href="index.php">All Pictures</a>
-                    <a href="liked_pictures.php">Liked Pictures</a>
+                    <a href="liked_pictures.php">Liked Pictures</a>                    
+                    <a href="my_pictures.php">My Pictures</a>
+                    <a href="upload.php">Upload Picture</a>
                 </div>
-                <div class="logout">
-                    <form action="logout.php" method="POST">
-                        <button type="submit" name="logout">Logout</button>
-                    </form>
+                <div class="menu-logout">
+                    <a href="logout.php" class="logout-btn">Logout</a>
                 </div>
             </div>
         <?php else: ?>
@@ -140,4 +134,3 @@ $pictures = getAllPictures();
         </script>
     </body>
 </html>
-

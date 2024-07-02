@@ -165,7 +165,7 @@ a:hover {
     text-decoration: underline;
 }
 
-.header, .menu {
+.header {
     position: fixed;
     width: 100%;
     display: flex;
@@ -175,32 +175,46 @@ a:hover {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.menu {
-    top: 60px;
-    padding: 10px 0;
-}
-
 .header {
     top: 0;
     padding: 10px 0;
     background-color: #fff;
 }
 
-.logout {
-    margin-left: auto; 
+.menu {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background-color: #f8f8f8;
+    border-bottom: 1px solid #ddd;
 }
 
-.logout button {
-    background-color: #dc3545;
-    color: #fff;
+.menu-links {
+    display: flex;
+    gap: 15px;
+}
+
+.menu-links a {
+    text-decoration: none;
+    color: #333;
+}
+
+.menu-logout {
+    margin-left: auto;
+}
+
+.logout-btn {
+    background-color: red;
+    color: white;
     border: none;
-    padding: 10px 20px;
-    border-radius: 4px;
+    padding: 8px 16px;
     cursor: pointer;
+    border-radius: 4px;
 }
 
-.logout button:hover {
-    background-color: #c82333;
+.logout-btn:hover {
+    background-color: darkred;
 }
 
 .error-message {
