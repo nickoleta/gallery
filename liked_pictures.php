@@ -57,22 +57,19 @@ $likedPictures = getLikedPictures($user_id, $conn);
             <table>
                 <tbody>
                     <?php
-                    $rowCount = 0;
                     foreach ($likedPictures as $picture):
-                        if ($rowCount % 4 == 0)
-                            echo "<tr>";
-                        ?>
+                    ?>
+                    <tr id="picture_<?php echo $picture['id']; ?>">
                         <td>
                             <div class="image">
                                 <img src="images/<?php echo $picture['filename']; ?>" alt="Picture" class="thumbnail" onclick="openModal('<?php echo $picture['filename']; ?>', <?php echo $picture['id']; ?>)">
+                                <?php if (!empty($username)): ?>
+                                    <button class="like-btn liked" data-picture-id="<?php echo $picture['id']; ?>" onclick="toggleLike(this)">&#9829;</button>
+                                <?php endif; ?>
                             </div>
                         </td>
-                        <?php
-                        $rowCount++;
-                        if ($rowCount % 4 == 0 || $rowCount == count($likedPictures))
-                            echo "</tr>";
-                    endforeach;
-                    ?>
+                    </tr>
+                    <?php endforeach; ?>
                 </tbody>
             </table>
         </div>
@@ -94,6 +91,35 @@ $likedPictures = getLikedPictures($user_id, $conn);
         function closeModal() {
             document.getElementById('myModal').style.display = "none";
             document.getElementById('content').classList.remove('blurred');
+        }
+
+        function toggleLike(button) {
+            const pictureId = button.getAttribute('data-picture-id');
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', 'like_picture.php', true);
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xhr.onload = function () {
+                if (xhr.status === 200) {
+                    try {
+                        const response = JSON.parse(xhr.responseText);
+                        if (response.status === 'success') {
+                            // Remove the picture from the DOM
+                            const pictureElement = document.getElementById('picture_' + pictureId);
+                            if (pictureElement) {
+                                pictureElement.remove();
+                            }
+                        } else {
+                            console.error('Error:', response.message);
+                        }
+                    } catch (e) {
+                        console.error('Error parsing JSON:', e);
+                        console.error('Response:', xhr.responseText);
+                    }
+                } else {
+                    console.error('Request failed. Returned status of ' + xhr.status);
+                }
+            };
+            xhr.send('picture_id=' + pictureId + '&unlike=1');
         }
     </script>
 </body>

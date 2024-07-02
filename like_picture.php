@@ -1,8 +1,4 @@
 <?php
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-
 session_start();
 
 include 'includes/db.php';
@@ -23,18 +19,22 @@ if ($user_id == getPictureUserId($picture_id, $conn)) {
     exit();
 }
 
-// Toggle like status
-if (userHasLiked($user_id, $picture_id, $conn)) {
+// Check if we are liking or unliking
+$unlike = isset($_POST['unlike']) && $_POST['unlike'] == '1';
+
+if ($unlike) {
+    // Remove like
     if (removeLike($user_id, $picture_id, $conn)) {
         echo json_encode(['status' => 'success', 'liked' => false]);
     } else {
-        echo json_encode(['status' => 'error', 'message' => 'Failed to remove like']);
+        echo json_encode(['status' => 'error', 'message' => 'Failed to unlike picture']);
     }
 } else {
+    // Add like
     if (addLike($user_id, $picture_id, $conn)) {
         echo json_encode(['status' => 'success', 'liked' => true]);
     } else {
-        echo json_encode(['status' => 'error', 'message' => 'Failed to add like']);
+        echo json_encode(['status' => 'error', 'message' => 'Failed to like picture']);
     }
 }
 ?>
