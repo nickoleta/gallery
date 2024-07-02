@@ -14,6 +14,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($userId && isset($_FILES['picture'])) {
         $filename = $_FILES['picture']['name'];
         $filepath = 'images/' . $filename;
+        
+        // Move uploaded file to target directory
         if (move_uploaded_file($_FILES['picture']['tmp_name'], $filepath)) {
             if (uploadPicture($filename, $userId)) {
                 echo "Picture uploaded successfully.";
@@ -45,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 </div>
             <?php endif; ?>
             <div class="form-group">
-                <input type="file" id="file" name="file" required>
+                <input type="file" id="picture" name="picture" required>
             </div>
             <button class="upload" type="submit">Upload</button>
             <div class="upload-redirect">

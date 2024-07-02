@@ -73,10 +73,15 @@ function getAllPictures() {
 
 function uploadPicture($filename, $userId) {
     global $conn;
-    $stmt = $conn->prepare("INSERT INTO pictures (filename, user_id) VALUES (:filename, :user_id)");
-    $stmt->bindParam(':filename', $filename);
-    $stmt->bindParam(':user_id', $userId);
-    return $stmt->execute();
+    try {
+        $stmt = $conn->prepare("INSERT INTO pictures (filename, user_id) VALUES (:filename, :user_id)");
+        $stmt->bindParam(':filename', $filename);
+        $stmt->bindParam(':user_id', $userId);
+        return $stmt->execute();
+    } catch (PDOException $e) {
+        echo "Error: " . $e->getMessage();
+        return false;
+    }
 }
 
 function getUserPictures($user_id) {
