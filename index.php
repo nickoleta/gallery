@@ -67,7 +67,7 @@ $pictures = getAllPictures();
                                 <?php if (!empty($username) && $picture['user_id'] == $_SESSION['user_id']): ?>
                                     <form action="delete_picture.php" method="POST" class="delete-form">
                                         <input type="hidden" name="picture_id" value="<?php echo $picture['id']; ?>">
-                                        <button type="submit" class="delete">Delete</button>
+                                        <button type="button" class="delete" onclick="deletePicture(this)">Delete</button>
                                     </form>
                                 <?php endif; ?>
                                 <?php if (!empty($username) && $picture['user_id'] != $_SESSION['user_id']): ?>
