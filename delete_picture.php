@@ -4,48 +4,59 @@ session_start();
 include 'includes/db.php';
 include 'includes/functions.php';
 
-$user_id = $_SESSION['user_id'] ?? 0;
-
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && !empty($_POST['picture_id'])) {
-    $picture_id = $_POST['picture_id'];
-
-    // Fetch the picture to ensure it belongs to the user
-    $picture = getPictureById($picture_id);
-
-    if ($picture && $picture['user_id'] == $user_id) {
-        // Delete the picture from the database and filesystem
-        if (deletePicture($picture_id, $picture['filename'])) {
-            header("Location: index.php");
-            exit();
-        } else {
-            $error = 'Error deleting picture';
-        }
-    } else {
-        $error = 'You do not have permission to delete this picture';
-    }
-} else {
-    $error = 'Invalid request';
+// Check if user is logged in and if picture_id is provided
+if (!isLoggedIn() || !isset($_POST['picture_id'])) {
+    echo json_encode(['status' => 'error', 'message' => 'Invalid request']);
+    exit();
 }
 
-header("Location: my_pictures.php?error=" . urlencode($error));
-exit();
+$user_id = getLoggedInUserId();
+$picture_id = $_POST['picture_id'];
 
-function getPictureById($id) {
-    global $conn;
-    $stmt = $conn->prepare("SELECT * FROM pictures WHERE id = :id");
-    $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+// Check if the picture belongs to the logged-in user
+if ($user_id != getPictureUserId($picture_id, $conn)) {
+    echo json_encode(['status' => 'error', 'message' => 'You can only delete your own pictures']);
+    exit();
+}
+
+try {
+    // Begin transaction
+    $conn->beginTransaction();
+
+    // Delete all likes associated with the picture
+    $stmt = $conn->prepare("DELETE FROM likes WHERE picture_id = :picture_id");
+    $stmt->bindParam(':picture_id', $picture_id, PDO::PARAM_INT);
     $stmt->execute();
-    return $stmt->fetch(PDO::FETCH_ASSOC);
-}
 
-function deletePicture($id, $filename) {
-    global $conn;
-    $stmt = $conn->prepare("DELETE FROM pictures WHERE id = :id");
-    $stmt->bindParam(':id', $id, PDO::PARAM_INT);
-    if ($stmt->execute()) {
-        // Delete file from filesystem
-        return unlink('images/' . $filename);
+    // Get the filename of the picture to delete the file from the server
+    $stmt = $conn->prepare("SELECT filename FROM pictures WHERE id = :picture_id");
+    $stmt->bindParam(':picture_id', $picture_id, PDO::PARAM_INT);
+    $stmt->execute();
+    $picture = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if ($picture) {
+        $filename = 'images/' . $picture['filename'];
+
+        // Delete the picture record from the database
+        $stmt = $conn->prepare("DELETE FROM pictures WHERE id = :picture_id");
+        $stmt->bindParam(':picture_id', $picture_id, PDO::PARAM_INT);
+        $stmt->execute();
+
+        // Commit transaction
+        $conn->commit();
+
+        // Delete the file from the server
+        if (file_exists($filename)) {
+            unlink($filename);
+        }
+
+        echo json_encode(['status' => 'success', 'message' => 'Picture deleted successfully']);
+    } else {
+        echo json_encode(['status' => 'error', 'message' => 'Picture not found']);
     }
-    return false;
+} catch (PDOException $e) {
+    // Rollback transaction if there is an error
+    $conn->rollBack();
+    echo json_encode(['status' => 'error', 'message' => 'Failed to delete picture: ' . $e->getMessage()]);
 }
 ?>

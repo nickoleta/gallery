@@ -54,7 +54,7 @@ $pictures = getUserPictures($user_id);
                             <img src="images/<?php echo $picture['filename']; ?>" alt="Picture" class="thumbnail" onclick="openModal(this.src)">
                             <form action="delete_picture.php" method="POST" class="delete-form">
                                 <input type="hidden" name="picture_id" value="<?php echo $picture['id']; ?>">
-                                <button type="submit" class="delete">Delete</button>
+                                <button type="button" class="delete" onclick="deletePicture(this)">Delete</button>
                             </form>
                         </div>
                     </td>
@@ -85,6 +85,28 @@ $pictures = getUserPictures($user_id);
         function closeModal() {
             document.getElementById('myModal').style.display = "none";
             document.getElementById('content').classList.remove('blurred');
+        }
+
+        function deletePicture(button) {
+            const form = button.closest('.delete-form');
+            const formData = new FormData(form);
+            const xhr = new XMLHttpRequest();
+
+            xhr.open('POST', 'delete_picture.php', true);
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    const response = JSON.parse(xhr.responseText);
+                    if (response.status === 'success') {
+                        form.closest('td').remove();
+                    } else {
+                        console.error('Error:', response.message);
+                    }
+                } else {
+                    console.error('Request failed. Returned status of ' + xhr.status);
+                }
+            };
+
+            xhr.send(formData);
         }
     </script>
 </body>
