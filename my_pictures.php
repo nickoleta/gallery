@@ -56,7 +56,6 @@ $pictures = getUserPictures($user_id);
                                 <input type="hidden" name="picture_id" value="<?php echo $picture['id']; ?>">
                                 <button type="submit" class="delete">Delete</button>
                             </form>
-                            <button class="like-btn" onclick="toggleLike(this)">&#9829;</button>
                         </div>
                     </td>
                     <?php
@@ -86,10 +85,6 @@ $pictures = getUserPictures($user_id);
         function closeModal() {
             document.getElementById('myModal').style.display = "none";
             document.getElementById('content').classList.remove('blurred');
-        }
-
-        function toggleLike(button) {
-            button.classList.toggle('liked');
         }
     </script>
 </body>

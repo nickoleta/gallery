@@ -73,8 +73,10 @@ function getAllPictures() {
 
 function uploadPicture($filename, $userId) {
     global $conn;
-    $stmt = $conn->prepare("INSERT INTO pictures (filename, user_id) VALUES (?, ?)");
-    return $stmt->execute([$filename, $userId]);
+    $stmt = $conn->prepare("INSERT INTO pictures (filename, user_id) VALUES (:filename, :user_id)");
+    $stmt->bindParam(':filename', $filename);
+    $stmt->bindParam(':user_id', $userId);
+    return $stmt->execute();
 }
 
 function getUserPictures($user_id) {
@@ -85,9 +87,64 @@ function getUserPictures($user_id) {
     $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
     $stmt->execute();
 
-    $pictures = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-    return $pictures;
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
+function userHasLiked($user_id, $picture_id, $conn) {
+    try {
+        $sql = "SELECT * FROM likes WHERE user_id = :user_id AND picture_id = :picture_id";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
+        $stmt->bindParam(':picture_id', $picture_id, PDO::PARAM_INT);
+        $stmt->execute();
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        return $result !== false;
+    } catch (PDOException $e) {
+        echo "Error: " . $e->getMessage();
+        return false;
+    }
+}
+
+function addLike($user_id, $picture_id, $conn) {
+    if (!userHasLiked($user_id, $picture_id, $conn)) {
+        $sql = "INSERT INTO likes (user_id, picture_id) VALUES (:user_id, :picture_id)";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
+        $stmt->bindParam(':picture_id', $picture_id, PDO::PARAM_INT);
+        return $stmt->execute();
+    }
+    return false;
+}
+
+function removeLike($user_id, $picture_id, $conn) {
+    $sql = "DELETE FROM likes WHERE user_id = :user_id AND picture_id = :picture_id";
+    $stmt = $conn->prepare($sql);
+    $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
+    $stmt->bindParam(':picture_id', $picture_id, PDO::PARAM_INT);
+    return $stmt->execute();
+}
+
+function getPictureUserId($picture_id, $conn) {
+    $sql = "SELECT user_id FROM pictures WHERE id = :picture_id";
+    $stmt = $conn->prepare($sql);
+    $stmt->bindParam(':picture_id', $picture_id, PDO::PARAM_INT);
+    $stmt->execute();
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    return $result['user_id'];
+}
+
+function getLikedPictures($user_id, $conn) {
+    $sql = "
+        SELECT p.* 
+        FROM pictures p
+        INNER JOIN likes l ON p.id = l.picture_id
+        WHERE l.user_id = :user_id
+    ";
+    $stmt = $conn->prepare($sql);
+    $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
+    $stmt->execute();
+
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
 ?>
