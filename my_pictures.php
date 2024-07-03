@@ -8,6 +8,12 @@ include 'includes/functions.php';
 $username = $_SESSION['username'] ?? '';
 $user_id = $_SESSION['user_id'] ?? 0;
 
+// Redirect to index.php if the user is not logged in
+if (empty($user_id)) {
+    header("Location: index.php");
+    exit();
+}
+
 // Fetch user-specific pictures
 $pictures = getUserPictures($user_id);
 ?>
