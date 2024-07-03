@@ -4,6 +4,12 @@ session_start();
 include 'includes/db.php';
 include 'includes/functions.php';
 
+// Redirect to index.php if the user is not logged in
+if (empty($_SESSION['user_id'])) {
+    header("Location: index.php");
+    exit();
+}
+
 // Logout logic
 if (!empty($_POST['logout'])) {
     session_destroy();
@@ -30,44 +36,48 @@ $likedPictures = getLikedPictures($user_id, $conn);
             <h1>Liked Pictures</h1>
         </header>
 
-        <?php if (!empty($username)): ?>
-            <div class="menu">
-                <div class="menu-links">
-                    <a href="index.php">All Pictures</a>
-                    <a href="liked_pictures.php">Liked Pictures</a>                    
-                    <a href="my_pictures.php">My Pictures</a>
-                    <a href="upload.php">Upload Picture</a>
-                </div>
-                <div class="menu-logout">
-                    <a href="logout.php" class="logout-btn">Logout</a>
-                </div>
+        <div class="menu">
+            <div class="menu-links">
+                <a href="index.php">All Pictures</a>
+                <a href="liked_pictures.php">Liked Pictures</a>                    
+                <a href="my_pictures.php">My Pictures</a>
+                <a href="upload.php">Upload Picture</a>
             </div>
-        <?php else: ?>
-            <div class="menu">
-                <div class="login">
-                    <a href="login.php">Login</a>
-                </div>
+            <div class="menu-logout">
+                <a href="logout.php" class="logout-btn">Logout</a>
             </div>
-        <?php endif; ?>
+        </div>
 
         <div class="gallery-container" id="content">
             <div class="gallery">
                 <table>
                     <tbody>
                         <?php
+                        $rowCount = 0;
                         foreach ($likedPictures as $picture):
+                            if ($rowCount % 4 == 0) {
+                                echo "<tr>";
+                            }
                             ?>
-                            <tr id="picture_<?php echo $picture['id']; ?>">
-                                <td>
-                                    <div class="image">
-                                        <img src="images/<?php echo $picture['filename']; ?>" alt="Picture" class="thumbnail" onclick="openModal('<?php echo $picture['filename']; ?>', <?php echo $picture['id']; ?>)">
-                                        <?php if (!empty($username)): ?>
-                                            <button class="like-btn liked" data-picture-id="<?php echo $picture['id']; ?>" onclick="toggleLike(this)">&#9829;</button>
-                                        <?php endif; ?>
-                                    </div>
-                                </td>
-                            </tr>
-                        <?php endforeach; ?>
+                        <td id="picture_<?php echo $picture['id']; ?>">
+                            <div class="image">
+                                <img src="images/<?php echo $picture['filename']; ?>" alt="Picture" class="thumbnail" onclick="openModal('<?php echo $picture['filename']; ?>', <?php echo $picture['id']; ?>)">
+                                <?php if (!empty($username)): ?>
+                                    <button class="like-btn liked" data-picture-id="<?php echo $picture['id']; ?>" onclick="toggleLike(this)">&#9829;</button>
+                                <?php endif; ?>
+                            </div>
+                        </td>
+                        <?php
+                        $rowCount++;
+                        if ($rowCount % 4 == 0) {
+                            echo "</tr>";
+                        }
+                        endforeach;
+                        // Ensure to close the last row if it's not complete
+                        if ($rowCount % 4 != 0) {
+                            echo "</tr>";
+                        }
+                        ?>
                     </tbody>
                 </table>
             </div>
